@@ -1,0 +1,824 @@
+.auth-gate {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 40px 32px;
+  box-sizing: border-box;
+}
+
+.auth-title {
+  font-size: 28px;
+  margin: 0 0 8px;
+  letter-spacing: -0.5px;
+}
+
+.auth-subtitle {
+  color: var(--text);
+  margin-bottom: 28px;
+}
+
+.auth-status {
+  color: var(--text);
+  line-height: 150%;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  text-align: left;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-label {
+  font-size: 14px;
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+.auth-field input {
+  font: inherit;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.auth-button {
+  font: inherit;
+  font-weight: 500;
+  padding: 11px 16px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  color: #fff;
+  background: var(--accent);
+  transition: background 0.2s, transform 0.1s;
+}
+
+.auth-button:hover:not(:disabled) {
+  background: var(--accent-border);
+}
+
+.auth-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.auth-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.auth-button.ghost {
+  color: var(--text-h);
+  background: transparent;
+  border-color: var(--border);
+  padding: 8px 14px;
+  font-size: 15px;
+}
+
+.auth-button.ghost:hover:not(:disabled) {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.auth-error {
+  color: #dc2626;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Dashboard layout */
+.dashboard-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.dashboard-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  box-sizing: border-box;
+}
+
+.dashboard-title {
+  font-size: 22px;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.dashboard-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.dashboard-email {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.dashboard-main {
+  flex-grow: 1;
+  padding: 28px 24px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Coop selector */
+.coop-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.coop-selector-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.coop-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.coop-tabs-status {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.coop-tab {
+  font: inherit;
+  font-size: 15px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.coop-tab:hover {
+  border-color: var(--accent-border);
+}
+
+.coop-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.coop-add {
+  display: flex;
+  gap: 8px;
+}
+
+.coop-add input {
+  font: inherit;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  outline: none;
+  width: 180px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.coop-add input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.coop-add-button {
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  color: #fff;
+  background: var(--accent);
+  transition: background 0.2s, transform 0.1s;
+}
+
+.coop-add-button:hover:not(:disabled) {
+  background: var(--accent-border);
+}
+
+.coop-add-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.coop-error {
+  color: #dc2626;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Flock grid */
+.flock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.flock-status,
+.flock-error {
+  color: var(--text);
+  padding: 24px;
+  text-align: center;
+}
+
+.flock-error {
+  color: #dc2626;
+}
+
+.chicken-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.chicken-card:hover {
+  transform: translateY(-3px);
+  box-shadow: rgba(0, 0, 0, 0.15) 0 14px 20px -6px,
+    rgba(0, 0, 0, 0.08) 0 6px 10px -4px;
+}
+
+.chicken-photo {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  background: var(--code-bg);
+  overflow: hidden;
+}
+
+.chicken-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.chicken-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  opacity: 0.5;
+}
+
+.chicken-info {
+  padding: 14px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chicken-name {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-h);
+}
+
+.chicken-breed {
+  font-size: 14px;
+  color: var(--text);
+  margin: 0;
+}
+
+.chicken-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.chicken-sex {
+  font-size: 13px;
+  color: var(--text);
+  text-transform: capitalize;
+}
+
+.status-badge {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 999px;
+  text-transform: capitalize;
+  color: #fff;
+}
+
+.status-active {
+  background: #16a34a;
+}
+
+.status-molting {
+  background: #ca8a04;
+}
+
+.status-broody {
+  background: #d97706;
+}
+
+.status-sick {
+  background: #dc2626;
+}
+
+.status-deceased {
+  background: #4b5563;
+}
+
+.status-default {
+  background: #6b7280;
+}
+
+/* Flock header */
+.flock-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.flock-heading {
+  font-size: 20px;
+  margin: 0;
+}
+
+/* Bird form modal */
+.bird-form-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+  box-sizing: border-box;
+  animation: bird-fade 0.15s ease-out;
+}
+
+@keyframes bird-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.bird-form-modal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  box-sizing: border-box;
+  animation: bird-slide 0.2s ease-out;
+}
+
+@keyframes bird-slide {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.bird-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.bird-form-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.bird-form-close {
+  font-size: 28px;
+  line-height: 1;
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color 0.2s;
+}
+
+.bird-form-close:hover {
+  color: var(--text-h);
+}
+
+.bird-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+}
+
+.bird-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bird-label {
+  font-size: 14px;
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+.required {
+  color: #dc2626;
+}
+
+.bird-field input,
+.bird-field select,
+.bird-field textarea {
+  font: inherit;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.bird-field textarea {
+  resize: vertical;
+  font-family: var(--sans);
+}
+
+.bird-field input:focus,
+.bird-field select:focus,
+.bird-field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.bird-field-row {
+  display: flex;
+  gap: 16px;
+}
+
+.bird-field-row .bird-field {
+  flex: 1;
+}
+
+@media (max-width: 520px) {
+  .bird-field-row {
+    flex-direction: column;
+  }
+}
+
+.bird-photo-input {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bird-photo-button {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.bird-photo-button:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.bird-photo-filename {
+  font-size: 14px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bird-photo-preview {
+  margin-top: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  width: 160px;
+  aspect-ratio: 4 / 3;
+  background: var(--code-bg);
+}
+
+.bird-photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bird-error {
+  color: #dc2626;
+  font-size: 14px;
+  margin: 0;
+}
+
+.bird-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+/* Chicken card clickability */
+.chicken-card {
+  cursor: pointer;
+}
+
+/* Chicken profile */
+.chicken-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile-back {
+  align-self: flex-start;
+}
+
+.profile-card {
+  display: flex;
+  gap: 32px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.profile-photo {
+  flex: 0 0 320px;
+  max-width: 320px;
+  background: var(--code-bg);
+  overflow: hidden;
+}
+
+.profile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  opacity: 0.4;
+}
+
+.profile-info {
+  flex: 1;
+  padding: 28px 28px 28px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.profile-name {
+  font-size: 28px;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.profile-attributes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+  margin: 0;
+}
+
+.profile-attribute dt {
+  font-size: 13px;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.profile-attribute dd {
+  font-size: 16px;
+  color: var(--text-h);
+  margin: 0;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.profile-features h3 {
+  font-size: 16px;
+  margin: 0 0 8px;
+  color: var(--text-h);
+}
+
+.profile-features p {
+  margin: 0;
+  color: var(--text);
+  line-height: 150%;
+}
+
+@media (max-width: 640px) {
+  .profile-card {
+    flex-direction: column;
+  }
+  .profile-photo {
+    flex: none;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+  .profile-photo-placeholder {
+    min-height: 0;
+  }
+  .profile-info {
+    padding: 20px;
+  }
+}
+
+/* --- NEW: Chicken Logs Section --- */
+
+.chicken-logs-section {
+  margin-top: 2rem;
+  border-top: 1px solid var(--border, #ccc);
+  padding-top: 1rem;
+}
+
+.log-form {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-input {
+  padding: 0.5rem;
+  border: 1px solid var(--border, #ccc);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.log-form .auth-button {
+  width: 100px;
+  padding: 0.5rem;
+}
+
+.error-text {
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.log-card {
+  background: var(--bg, #f5f5f5);
+  border: 1px solid var(--border);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.log-content {
+  margin: 0;
+  line-height: 1.4;
+  color: var(--text-h);
+}
+
+/* --- NEW: Quick Egg Log Section --- */
+
+.quick-egg-log-section {
+  background: var(--bg);
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.quick-egg-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 16px;
+  color: var(--text-h);
+}
+
+.quick-egg-form {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.quick-egg-number-input {
+  width: 60px;
+}
+
+.quick-egg-message {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.message-success {
+  color: #16a34a;
+}
+
+.message-error {
+  color: #dc2626;
+}
