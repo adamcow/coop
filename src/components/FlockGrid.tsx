@@ -20,14 +20,6 @@ export interface FlockGridHandle {
   refresh: () => void;
 }
 
-const STATUS_STYLES: Record<string, string> = {
-  active: 'status-active',
-  molting: 'status-molting',
-  broody: 'status-broody',
-  sick: 'status-sick',
-  deceased: 'status-deceased',
-};
-
 const FlockGrid = forwardRef<FlockGridHandle, FlockGridProps>(
   function FlockGrid({ activeCoopId, onSelectChicken }, ref) {
     const [chickens, setChickens] = useState<Chicken[]>([]);

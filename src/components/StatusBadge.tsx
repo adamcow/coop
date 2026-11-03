@@ -1,37 +1,27 @@
-// src/components/StatusBadge.tsx
-
-export type ChickenStatus =
-  | 'active'
-  | 'molting'
-  | 'broody'
-  | 'sick'
-  | 'deceased';
+import type { ChickenStatus } from '../ChickenStatus';
 
 interface StatusBadgeProps {
-  status: string | null; // Accepting string to gracefully handle legacy/un-migrated DB data
+  status: string | null;
 }
+
+const STATUS_CLASSES: Record<ChickenStatus, string> = {
+  active: 'status-active',
+  broody: 'status-broody',
+  molting: 'status-molting',
+  sick: 'status-sick',
+  rehomed: 'status-rehomed',
+  deceased: 'status-deceased',
+};
 
 export default function StatusBadge({ status }: StatusBadgeProps) {
   if (!status) return null;
 
-  // Normalize to handle any existing DB inconsistencies before the check constraint
-  const normalizedStatus = status.toLowerCase().trim();
-
-  // Map known statuses to their specific CSS classes
-  const statusMap: Record<string, string> = {
-    active: 'status-active',
-    molting: 'status-molting',
-    broody: 'status-broody',
-    sick: 'status-sick',
-    deceased: 'status-deceased',
-  };
-
-  // Fallback to a default gray badge if an unknown string sneaks in
-  const statusClass = statusMap[normalizedStatus] || 'status-default';
+  const normalized = status.toLowerCase().trim();
+  const statusClass =
+    STATUS_CLASSES[normalized as ChickenStatus] ?? 'status-default';
 
   return (
     <span className={`status-badge ${statusClass}`}>
-      {/* Capitalize the first letter for display purposes */}
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );

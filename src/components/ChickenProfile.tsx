@@ -1,18 +1,74 @@
+import { useState } from 'react';
 import type { Database } from '../types/supabase';
+import { supabase } from '../supabaseClient';
 import ChickenLogs from './ChickenLogs';
 import StatusBadge from './StatusBadge';
+import BirdForm from './BirdForm';
 
 type Chicken = Database['public']['Tables']['chickens']['Row'];
 
 interface ChickenProfileProps {
   chicken: Chicken;
   onBack: () => void;
+  onUpdated: (chicken: Chicken) => void;
+  onDeleted: () => void;
 }
 
 export default function ChickenProfile({
   chicken,
   onBack,
+  onUpdated,
+  onDeleted,
 }: ChickenProfileProps) {
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleDelete = async () => {
+    const confirmed = window.confirm(
+      `Delete ${chicken.name}? This removes their profile and notes and can't be undone.\n\n` +
+        `If ${chicken.name} has passed away or moved on, set their status to Deceased or Rehomed instead to keep their history.`
+    );
+    if (!confirmed) return;
+
+    setDeleting(true);
+    setError(null);
+
+    // Remove this bird's notes, and keep egg tallies but unlink them from the bird
+    const { error: logsError } = await supabase
+      .from('logs')
+      .delete()
+      .eq('chicken_id', chicken.id);
+    if (logsError) {
+      setError(logsError.message);
+      setDeleting(false);
+      return;
+    }
+
+    const { error: eggError } = await supabase
+      .from('egg_logs')
+      .update({ chicken_id: null })
+      .eq('chicken_id', chicken.id);
+    if (eggError) {
+      setError(eggError.message);
+      setDeleting(false);
+      return;
+    }
+
+    const { error: deleteError } = await supabase
+      .from('chickens')
+      .delete()
+      .eq('id', chicken.id);
+    if (deleteError) {
+      setError(deleteError.message);
+      setDeleting(false);
+      return;
+    }
+
+    setDeleting(false);
+    onDeleted();
+  };
+
   return (
     <section className="chicken-profile">
       <button
@@ -73,9 +129,41 @@ export default function ChickenProfile({
               <p>{chicken.features}</p>
             </div>
           )}
+
+          {error && <p className="auth-error">{error}</p>}
+
+          <div className="profile-actions">
+            <button
+              type="button"
+              className="auth-button"
+              onClick={() => setEditOpen(true)}
+              disabled={deleting}
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              className="auth-button danger"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              {deleting ? 'Deleting…' : 'Delete'}
+            </button>
+          </div>
         </div>
       </div>
+
       <ChickenLogs chickenId={chicken.id} />
+
+      <BirdForm
+        open={editOpen}
+        chicken={chicken}
+        onClose={() => setEditOpen(false)}
+        onSubmitted={(saved) => {
+          setEditOpen(false);
+          if (saved) onUpdated(saved);
+        }}
+      />
     </section>
   );
 }

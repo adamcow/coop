@@ -7,18 +7,23 @@ import type { FlockGridHandle } from './components/FlockGrid';
 import BirdForm from './components/BirdForm';
 import ChickenProfile from './components/ChickenProfile';
 import QuickEggLog from './components/QuickEggLog';
+import EggStats from './components/EggStats';
+import type { EggStatsHandle } from './components/EggStats';
 import type { Database } from './types/supabase';
 import './App.css';
 
+type ThemePreference = 'light' | 'dark' | 'system';
 type Chicken = Database['public']['Tables']['chickens']['Row'];
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [themePreference, setThemePreference] = useState<ThemePreference>('system');
   const [activeCoopId, setActiveCoopId] = useState<string | null>(null);
   const [birdFormOpen, setBirdFormOpen] = useState(false);
   const [selectedChicken, setSelectedChicken] = useState<Chicken | null>(null);
   const flockRef = useRef<FlockGridHandle>(null);
+  const eggStatsRef = useRef<EggStatsHandle>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -36,6 +41,53 @@ function App() {
       listener.subscription.unsubscribe();
     };
   }, []);
+
+  // Load the saved preference when the user signs in
+  useEffect(() => {
+    if (!session) {
+      setThemePreference('system');
+      return;
+    }
+
+    const savedTheme = session.user.user_metadata?.theme_preference;
+
+    if (
+      savedTheme === 'light' ||
+      savedTheme === 'dark' ||
+      savedTheme === 'system'
+    ) {
+      setThemePreference(savedTheme);
+    } else {
+      setThemePreference('system');
+    }
+  }, [session?.user.id]);
+
+  // Apply the selected theme to the entire application
+  useEffect(() => {
+    const root = document.documentElement;
+
+    if (themePreference === 'system') {
+      root.removeAttribute('data-theme');
+    } else {
+      root.setAttribute('data-theme', themePreference);
+    }
+  }, [themePreference]);
+
+  const changeTheme = async (theme: ThemePreference) => {
+    // Apply immediately
+    setThemePreference(theme);
+
+    // Save against the signed-in Supabase user
+    const { error } = await supabase.auth.updateUser({
+      data: {
+        theme_preference: theme,
+      },
+    });
+
+    if (error) {
+      console.error('Could not save theme preference:', error.message);
+    }
+  };
 
   if (loading) {
     return (
@@ -57,6 +109,18 @@ function App() {
         <div className="dashboard-header-inner">
           <h1 className="dashboard-title">Coop Dashboard</h1>
           <div className="dashboard-user">
+            <select
+              className="theme-selector"
+              value={themePreference}
+              onChange={(e) =>
+                changeTheme(e.target.value as ThemePreference)
+              }
+              aria-label="Choose appearance"
+            >
+              <option value="system">System</option>
+              <option value="light">Light mode</option>
+              <option value="dark">Dark mode</option>
+            </select>
             <span className="dashboard-email">{session.user.email}</span>
             <button
               type="button"
@@ -74,6 +138,8 @@ function App() {
           <ChickenProfile
             chicken={selectedChicken}
             onBack={() => setSelectedChicken(null)}
+            onUpdated={setSelectedChicken}
+            onDeleted={() => setSelectedChicken(null)}
           />
         ) : (
           <>
@@ -82,7 +148,9 @@ function App() {
               onSelectCoop={setActiveCoopId}
             />
 
-            <QuickEggLog />
+            <QuickEggLog onEggsLogged={() => eggStatsRef.current?.refresh()} />
+
+            <EggStats ref={eggStatsRef} />
 
             <div className="flock-header">
               <h2 className="flock-heading">Your Flock</h2>
@@ -137,7 +205,7 @@ function LoginForm() {
     if (signInError) {
       setError(signInError.message);
     }
-    // If successful, the onAuthStateChange listener in App will automatically update the session and hide this form.
+    // On success, onAuthStateChange in App updates the session and hides this form.
   };
 
   return (

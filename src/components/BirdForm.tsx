@@ -1,19 +1,23 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Database } from '../types/supabase'
 import { supabase } from '../supabaseClient'
+import { CHICKEN_STATUSES } from '../ChickenStatus'
 
 type Coop = Database['public']['Tables']['coops']['Row']
+type Chicken = Database['public']['Tables']['chickens']['Row']
 type ChickenInsert = Database['public']['Tables']['chickens']['Insert']
+type ChickenUpdate = Database['public']['Tables']['chickens']['Update']
 
 interface BirdFormProps {
   open: boolean
   onClose: () => void
-  onSubmitted: () => void
+  onSubmitted: (saved?: Chicken) => void
   defaultCoopId?: string | null
+  chicken?: Chicken | null // when provided, the form edits this bird
 }
 
 const SEX_OPTIONS = ['', 'hen', 'rooster']
-const STATUS_OPTIONS = ['', 'active', 'broody', 'molting', 'rehomed', 'deceased']
+const STATUS_OPTIONS = ['', ...CHICKEN_STATUSES]
 
 const EMPTY_FORM = {
   name: '',
@@ -25,7 +29,14 @@ const EMPTY_FORM = {
   coop_id: '',
 }
 
-export default function BirdForm({ open, onClose, onSubmitted, defaultCoopId }: BirdFormProps) {
+export default function BirdForm({
+  open,
+  onClose,
+  onSubmitted,
+  defaultCoopId,
+  chicken,
+}: BirdFormProps) {
+  const isEdit = !!chicken
   const [coops, setCoops] = useState<Coop[]>([])
   const [form, setForm] = useState(EMPTY_FORM)
   const [photo, setPhoto] = useState<File | null>(null)
@@ -45,12 +56,24 @@ export default function BirdForm({ open, onClose, onSubmitted, defaultCoopId }: 
 
   useEffect(() => {
     if (open) {
-      setForm({ ...EMPTY_FORM, coop_id: defaultCoopId ?? '' })
+      if (chicken) {
+        setForm({
+          name: chicken.name,
+          breed: chicken.breed ?? '',
+          sex: chicken.sex ?? '',
+          status: chicken.status ?? '',
+          hatch_date: chicken.hatch_date ?? '',
+          features: chicken.features ?? '',
+          coop_id: chicken.coop_id ?? '',
+        })
+      } else {
+        setForm({ ...EMPTY_FORM, coop_id: defaultCoopId ?? '' })
+      }
       setPhoto(null)
       setPhotoPreview(null)
       setError(null)
     }
-  }, [open, defaultCoopId])
+  }, [open, defaultCoopId, chicken])
 
   useEffect(() => {
     if (!photo) {
@@ -64,6 +87,9 @@ export default function BirdForm({ open, onClose, onSubmitted, defaultCoopId }: 
 
   if (!open) return null
 
+  const existingPhotoUrl = chicken?.photo_url ?? null
+  const previewSrc = photoPreview ?? existingPhotoUrl
+
   const handleField = (field: keyof typeof EMPTY_FORM, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
@@ -71,6 +97,24 @@ export default function BirdForm({ open, onClose, onSubmitted, defaultCoopId }: 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null
     setPhoto(file)
+  }
+
+  const uploadPhoto = async (file: File): Promise<string | null> => {
+    const ext = file.name.split('.').pop() ?? 'jpg'
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`
+    const { error: uploadError } = await supabase.storage
+      .from('chicken_photos')
+      .upload(fileName, file)
+
+    if (uploadError) {
+      setError(`Photo upload failed: ${uploadError.message}`)
+      return null
+    }
+
+    const { data } = supabase.storage
+      .from('chicken_photos')
+      .getPublicUrl(fileName)
+    return data.publicUrl
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -84,28 +128,16 @@ export default function BirdForm({ open, onClose, onSubmitted, defaultCoopId }: 
 
     setSubmitting(true)
 
-    let photoUrl: string | null = null
-
+    let newPhotoUrl: string | null = null
     if (photo) {
-      const ext = photo.name.split('.').pop() ?? 'jpg'
-      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`
-      const { error: uploadError } = await supabase.storage
-        .from('chicken_photos')
-        .upload(fileName, photo)
-
-      if (uploadError) {
-        setError(`Photo upload failed: ${uploadError.message}`)
+      newPhotoUrl = await uploadPhoto(photo)
+      if (!newPhotoUrl) {
         setSubmitting(false)
         return
       }
-
-      const { data: publicUrlData } = supabase.storage
-        .from('chicken_photos')
-        .getPublicUrl(fileName)
-      photoUrl = publicUrlData.publicUrl
     }
 
-    const insert: ChickenInsert = {
+    const fields = {
       name: form.name.trim(),
       breed: form.breed.trim() || null,
       sex: form.sex || null,
@@ -113,9 +145,31 @@ export default function BirdForm({ open, onClose, onSubmitted, defaultCoopId }: 
       hatch_date: form.hatch_date || null,
       features: form.features.trim() || null,
       coop_id: form.coop_id || null,
-      photo_url: photoUrl,
     }
 
+    if (isEdit && chicken) {
+      const update: ChickenUpdate = { ...fields }
+      if (newPhotoUrl) update.photo_url = newPhotoUrl // keep the old photo otherwise
+
+      const { data, error: updateError } = await supabase
+        .from('chickens')
+        .update(update)
+        .eq('id', chicken.id)
+        .select()
+        .single()
+
+      if (updateError) {
+        setError(updateError.message)
+        setSubmitting(false)
+        return
+      }
+
+      setSubmitting(false)
+      onSubmitted(data)
+      return
+    }
+
+    const insert: ChickenInsert = { ...fields, photo_url: newPhotoUrl }
     const { error: insertError } = await supabase.from('chickens').insert(insert)
 
     if (insertError) {
@@ -138,7 +192,9 @@ export default function BirdForm({ open, onClose, onSubmitted, defaultCoopId }: 
         aria-labelledby="bird-form-title"
       >
         <div className="bird-form-header">
-          <h2 id="bird-form-title">Add a Chicken</h2>
+          <h2 id="bird-form-title">
+            {isEdit ? `Edit ${chicken?.name}` : 'Add a Chicken'}
+          </h2>
           <button
             type="button"
             className="bird-form-close"
@@ -244,10 +300,14 @@ export default function BirdForm({ open, onClose, onSubmitted, defaultCoopId }: 
                 className="bird-photo-button"
                 onClick={() => fileInputRef.current?.click()}
               >
-                Choose photo
+                {existingPhotoUrl || photo ? 'Change photo' : 'Choose photo'}
               </button>
               <span className="bird-photo-filename">
-                {photo ? photo.name : 'No file selected'}
+                {photo
+                  ? photo.name
+                  : existingPhotoUrl
+                    ? 'Keeping current photo'
+                    : 'No file selected'}
               </span>
               <input
                 ref={fileInputRef}
@@ -257,9 +317,9 @@ export default function BirdForm({ open, onClose, onSubmitted, defaultCoopId }: 
                 hidden
               />
             </div>
-            {photoPreview && (
+            {previewSrc && (
               <div className="bird-photo-preview">
-                <img src={photoPreview} alt="Preview" />
+                <img src={previewSrc} alt="Preview" />
               </div>
             )}
           </label>
@@ -271,7 +331,7 @@ export default function BirdForm({ open, onClose, onSubmitted, defaultCoopId }: 
               Cancel
             </button>
             <button type="submit" className="auth-button" disabled={submitting}>
-              {submitting ? 'Saving…' : 'Add chicken'}
+              {submitting ? 'Saving…' : isEdit ? 'Save changes' : 'Add chicken'}
             </button>
           </div>
         </form>

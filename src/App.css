@@ -782,20 +782,23 @@
   color: var(--text-h);
 }
 
-/* --- NEW: Quick Egg Log Section --- */
+/* --- Quick Egg Log Section --- */
 
 .quick-egg-log-section {
-  background: var(--bg);
-  padding: 1rem;
+  background: var(--bg) !important;
+  color: var(--text-h);
+  padding: 1.5rem;
   border-radius: 12px;
   margin-bottom: 1.5rem;
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
+  transition: background 0.2s, color 0.2s;
 }
 
 .quick-egg-title {
-  margin: 0 0 0.5rem 0;
-  font-size: 16px;
+  margin: 0 0 1rem 0;
+  font-size: 20px;
+  font-weight: 600;
   color: var(--text-h);
 }
 
@@ -806,8 +809,32 @@
   flex-wrap: wrap;
 }
 
+.quick-egg-form input {
+  background: var(--bg);
+  color: var(--text-h);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font: inherit;
+}
+
 .quick-egg-number-input {
-  width: 60px;
+  width: 90px;
+  box-sizing: border-box;
+}
+
+.quick-egg-form button {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 10px 18px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.quick-egg-form button:hover {
+  background: var(--accent-border);
 }
 
 .quick-egg-message {
@@ -821,4 +848,217 @@
 
 .message-error {
   color: #dc2626;
+}
+
+/* --- Egg Stats Section --- */
+
+.egg-stats-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.egg-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.egg-stat-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.egg-stat-label {
+  font-size: 13px;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.egg-stat-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-h);
+  line-height: 1.1;
+}
+
+.egg-recent {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+
+.egg-recent-title {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.egg-recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.egg-recent-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.egg-recent-item:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.egg-recent-date {
+  color: var(--text);
+}
+
+.egg-recent-count {
+  font-weight: 500;
+  color: var(--text-h);
+  margin-left: auto;
+}
+
+.egg-recent-delete {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.egg-recent-delete:hover:not(:disabled) {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+}
+
+
+
+
+/* --- Rehomed status, profile actions, danger button --- */
+
+.status-rehomed {
+  background: #2563eb;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.auth-button.danger {
+  background: transparent;
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+.auth-button.danger:hover:not(:disabled) {
+  background: #dc2626;
+  color: #fff;
+}
+
+
+/* Theme selector */
+.theme-selector {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.theme-selector:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.theme-selector option {
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+/* --- Chicken Logs Edit & Delete Controls --- */
+
+.log-header {
+  align-items: center;
+  gap: 12px;
+}
+
+.log-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.log-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.log-inline-btn {
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.log-inline-btn:hover:not(:disabled) {
+  color: var(--text-h);
+  background: var(--code-bg);
+}
+
+.log-inline-btn.danger:hover:not(:disabled) {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.log-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.log-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.log-action-btn {
+  padding: 6px 14px;
+  font-size: 14px;
 }
